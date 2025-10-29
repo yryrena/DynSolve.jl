@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    name: Run package tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.11'
+
+      - name: Instantiate package environment
+        run: |
+          julia --project=. -e 'using Pkg; Pkg.instantiate()'
+
+      - name: Run tests
+        run: |
+          julia --project=. -e 'using Pkg; Pkg.test("DynSolve")'
+
+  docs:
+    name: Build and deploy docs
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.11'
+
+      - name: Instantiate docs environment
+        run: |
+          julia --project=docs -e 'using Pkg; Pkg.develop(path="."); Pkg.instantiate()'
+
+      - name: Build and deploy docs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          julia --project=docs docs/make.jl

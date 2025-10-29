@@ -1,0 +1,7 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+DynSolve   = "f1234567-abcd-4ef0-9999-abcde1234567"
+
+[compat]
+julia = "1.10"
+Documenter = "1"
