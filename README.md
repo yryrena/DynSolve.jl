@@ -4,6 +4,10 @@
 [![Docs](https://img.shields.io/badge/docs-stable-blue.svg)](https://yryrena.github.io/DynSolve.jl/)
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 686da0c (update)
 `DynSolve.jl` is a Julia package for automated solution and analysis of dynamic general equilibrium (DGE / RBC / DSGE / NK / HANK) models.
 
 It provides a unified workflow to:
@@ -20,14 +24,15 @@ It provides a unified workflow to:
 
 ## Project Status
 
-`DynSolve.jl v0.1.0` implements the **core numerical pipeline** for model analysis:
+`DynSolve.jl` is an early prototype (v0.1.0).  
 
-- `steadystate` (placeholder)
-- `linearize` (placeholder)
-- `solve` via `PerturbationSolver`
-- `impulse_response`, `analyze`, and `export_report`
+- The core pipeline (`steadystate → linearize → solve → IRF → report`) runs end-to-end and is tested in CI.
+- Some solvers (ProjectionSolver, VFISolver) and parts of the SteadyState/ModelSpec pipeline are still placeholders.
+- The public API is not stable yet.
 
-The symbolic model interface (`@dgesys`) and nonlinear solvers will be added in future releases.
+Full docs: https://yryrena.github.io/DynSolve.jl/
+
+Build status: see CI badge below.
 
 
 ---
