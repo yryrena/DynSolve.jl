@@ -5,41 +5,62 @@
 
 
 
-`DynSolve.jl` is a Julia package for automated solution and analysis of dynamic general equilibrium (DGE / RBC / DSGE / NK / HANK) models.
+`DynSolve.jl` is a Julia package for automated solution and analysis of dynamic general equilibrium models (RBC / DSGE / NK / HANK).
 
-It provides a unified workflow to:
-
-- specify symbolic models (variables, shocks, equations)
-- compute steady states
-- linearize (and eventually nonlinear expand)
-- solve using multiple backends (perturbation, projection, VFI)
-- generate impulse responses and analysis reports
-
-`DynSolve.jl` aims to be an open, high-performance alternative to **Dynare (MATLAB)**, built entirely in **Julia** and integrated with `ModelingToolkit.jl`.
+It aims to be an open, high-performance alternative to Dynare (MATLAB), written entirely in Julia. The design is meant to integrate with `ModelingToolkit.jl` and generic SciML tooling going forward.
 
 ---
 
 ## Project Status
 
-`DynSolve.jl` is an early prototype (v0.1.0).  
+`DynSolve.jl` is an early prototype (`v0.1.0`).
 
 - The core pipeline (`steadystate → linearize → solve → IRF → report`) runs end-to-end and is tested in CI.
-- Some solvers (ProjectionSolver, VFISolver) and parts of the SteadyState/ModelSpec pipeline are still placeholders.
-- The public API is not stable yet.
+- The `@dgesys` macro exists and can build a `Model` struct (variables, parameters, equations) from a small DSL.
+- `steadystate`, `linearize`, `solve`, `impulse_response`, `analyze`, and `export_report` all run (currently some are placeholders / simplified).
+- Nonlinear global solvers (projection / collocation) and heterogeneous-agent solvers (VFI) are scaffolded but not fully implemented yet.
+- Public API is not stable. Expect breaking changes.
 
-Full docs: https://yryrena.github.io/DynSolve.jl/
-
-Build status: see CI badge below.
+Docs are evolving; see https://yryrena.github.io/DynSolve.jl/ for high-level overview.  
 
 
 ---
 ## Features
 
-- clean modular design and working package structure
-- automated steady-state, linearization, and perturbation placeholders
-- impulse responses and simple Markdown reporting
-- ready for integration with `ModelingToolkit.jl`
-- extensible design for macroeconomic research and teaching
+- Lightweight model container `Model` with
+
+  - `variables::Vector{Symbol}`
+  - `parameters::Dict{Symbol,Any}`
+  - `equations::Vector{EquationData}`
+
+- A working macro-based mini-DSL:
+
+  ```julia
+  model = @dgesys begin
+      var(:c, :k)
+      param(β = 0.99, δ = 0.025)
+      equation(:Euler, :(1/c - β * (1/c) * (1 - δ)))
+  end
+  ```
+
+- Placeholder steady state and linearization routines
+
+- A perturbation-style `solve` step
+
+- Impulse response calculation for named shocks
+
+- Automatic Markdown report generation
+
+- Clean package layout with tests and CI
+
+The long-term goal is:
+
+- higher-level symbolic equations (time indices like `c(t+1)`)
+- automatic steady-state solving
+- perturbation & global solvers
+- heterogeneous-agent models
+- calibration / analysis utilities
+- strong ModelingToolkit.jl interoperability
 
 
 ---
@@ -59,34 +80,41 @@ Then activate and instantiate the environment:
 using Pkg
 Pkg.activate(".")
 Pkg.instantiate()
+
+using DynSolve
 ```
 
-Once registered, you will be able to install via:
-
-```julia
-Pkg.add("DynSolve")
-```
+You should now be able to construct a model, run the pipeline, and generate a report.
 
 ------
 
-## Quick Example
+## Minimal Working Example (current `@dgesys`)
 
-For the current prototype (v0.1.0):
-
-```JULIA
+```julia
 using DynSolve
 
-fake_model = Dict(:placeholder => true)
+## define a toy model using @dgesys
+m = @dgesys begin
+    var(:c, :k)                  ## declares model variables
+    param(β = 0.99, δ = 0.025)   ## parameters
+    equation(:Euler, :(1/c - β * (1/c) * (1 - δ)))  # named equation
+end
 
-ss  = steadystate(fake_model)
-lin = linearize(fake_model, ss)
+## m is a DynSolve.Model
+m.variables      ## e.g. [:c, :k]
+m.parameters     ## e.g. Dict(:β => 0.99, :δ => 0.025)
+m.equations      ## vector of EquationData(name, expr)
+
+## run the analysis pipeline (prototype / placeholder implementations)
+ss  = steadystate(m)
+lin = linearize(m, ss)
 sol = solve(lin, PerturbationSolver())
-irf = impulse_response(sol; shock=:εA, horizon=40)
-rep = analyze(fake_model, ss, sol, irf)
+irf = impulse_response(sol; shock = :εA, horizon = 40)
+rep = analyze(m, ss, sol, irf)
 export_report(rep, "rbc_report.md")
 ```
 
-This generates `rbc_report.md` containing:
+After running this, you should see a file `rbc_report.md` that looks like:
 
 ```markdown
 # DynSolve Report
@@ -94,16 +122,15 @@ This generates `rbc_report.md` containing:
 Analysis complete
 ```
 
+This demonstrates the full intended workflow: model definition → compute objects → analyze → export.
+
 ---
 
-## Planned Symbolic Interface
+## Planned higher-level DSL (not implemented yet)
 
-The symbolic interface will allow users to define models using a DSL macro:
+The goal is to support a richer, time-indexed, Dynare-style DSL:
 
 ```julia
-using DynSolve
-
-## define model
 model = @dgesys begin
     var c(t), k(t), y(t), r(t)
     shock εA(t)
@@ -111,29 +138,25 @@ model = @dgesys begin
 
     y(t)      ~ exp(a(t)) * k(t)^α
     a(t+1)    ~ ρA * a(t) + σA * εA(t)
+
     Euler     ~ 1/c(t) ~ β * (1/c(t+1)) * (1 + r(t+1) - δ)
     k(t+1)    ~ y(t) - c(t) + (1-δ)*k(t)
     r(t)      ~ α * y(t)/k(t)
 end
-
-## compute steady state
-ss = steadystate(model)
-
-## linearize around steady state
-lin = linearize(model, ss)
-
-## solve (perturbation)
-sol = solve(lin, PerturbationSolver())
-
-## impulse response
-irf = impulse_response(sol; shock=:εA, horizon=40)
-
-## report
-report = analyze(model, ss, sol, irf)
-export_report(report, "rbc_report.md")
 ```
 
-------
+This version would:
+
+- track leads/lags like `c(t+1)`, `k(t)`, etc.,
+- declare exogenous shocks,
+- expand to first-order conditions,
+- and feed solvers automatically.
+
+This syntax is aspirational and **not fully available yet**.
+
+The currently implemented DSL is the simpler form shown above  (`var(:c, :k)`, `param(...)`, `equation(...)`).
+
+---
 
 ## Directory Layout
 
@@ -151,39 +174,38 @@ DynSolve/
 
 ## Core API
 
-| Function                                     | Description                 |
-| -------------------------------------------- | --------------------------- |
-| `@dgesys`                                    | Define a model symbolically |
-| `steadystate(model)`                         | Compute steady state        |
-| `linearize(model, ss)`                       | Symbolic linearization      |
-| `solve(system, solver)`                      | Solve with chosen method    |
-| `impulse_response(solution; shock, horizon)` | Compute IRFs                |
-| `analyze(model, ss, sol, irf)`               | Summary statistics          |
-| `export_report(report, path)`                | Save markdown/HTML report   |
+| Function                                     | Description                        |
+| -------------------------------------------- | ---------------------------------- |
+| `@dgesys`                                    | Build a `Model` from DSL           |
+| `steadystate(model)`                         | Compute steady state (placeholder) |
+| `linearize(model, ss)`                       | Linearize around SS (placeholder)  |
+| `solve(system, PerturbationSolver())`        | Solve linearized system            |
+| `impulse_response(solution; shock, horizon)` | Compute IRFs                       |
+| `analyze(model, ss, sol, irf)`               | Basic summary stats                |
+| `export_report(report, path)`                | Emit Markdown summary              |
 
 ------
 
-## Available Solvers
+## Solvers
 
-| Solver                 | Description                                       |
-| ---------------------- | ------------------------------------------------- |
-| `PerturbationSolver()` | Linearized DSGE / RBC models (Blanchard–Kahn)     |
-| `ProjectionSolver()`   | Nonlinear global methods (Chebyshev, collocation) |
-| `VFISolver()`          | Value function iteration (heterogeneous agents)   |
+Right now, the only solver that actually runs end-to-end in tests is:
 
-------
+- `PerturbationSolver()`    A basic perturbation / linear-solution placeholder.
 
-## Documentation
+The following are sketched but not yet complete:
 
-Documentation is built with ``Documenter.jl`.
+- `ProjectionSolver()`   (planned; global / collocation / Chebyshev)
+- `VFISolver()`          (planned; value function iteration / HANK)
 
-To build locally:
+---
 
-```julia
+## Building the docs locally
+
+```
 julia --project=docs docs/make.jl
 ```
 
-The generated site will be available under `docs/build/`.
+The generated site will appear in `docs/build/`.
 
 ------
 

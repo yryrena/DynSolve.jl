@@ -1,20 +1,22 @@
-# PerturbationSolver.jl
-# Lightweight linear(ized) DSGE solver placeholder
+# Solvers/PerturbationSolver.jl
 
 """
     PerturbationSolver()
 
-Represents a linear DSGE/RBC perturbation-method solver (e.g. Blanchard-Kahn).
+Placeholder solver type for linearized (perturbation) methods.
 """
-struct PerturbationSolver end
+struct PerturbationSolver
+end
 
 """
-    solve(linearized_system::Dict, ::PerturbationSolver)
+    solve(sys::Dict, ::PerturbationSolver) -> Dict
 
-Placeholder perturbation solver.
-Returns fake policy matrices to demonstrate API.
+Pretend to solve the linearized model and return policy objects.
 """
-function solve(linearized_system::Dict, ::PerturbationSolver)
+function solve(sys::Dict, ::PerturbationSolver)
     @info "Solving linearized model (perturbation placeholder)..."
-    return Dict(:G1 => [0.95], :impact => [0.1])
+    return Dict(
+        :G1     => [0.95],
+        :impact => [0.1],
+    )
 end

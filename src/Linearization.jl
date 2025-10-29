@@ -1,15 +1,15 @@
 # Linearization.jl
-# Placeholder linearization utilities
-
-using LinearAlgebra
 
 """
-    linearize(model, ss; order::Int=1)
+    linearize(model, ss) -> Dict
 
-Placeholder linearization routine.
-Returns dummy system matrices A, B.
+Placeholder linearization.
+Returns dummy A,B matrices.
 """
-function linearize(model, ss; order::Int=1)
-    @info "Linearizing model (order = $order)..."
-    return Dict(:A => [0.9], :B => [0.1])
+function linearize(model, ss)
+    @info "Linearizing model (order = 1)..."
+    return Dict(
+        :A => [0.9],
+        :B => [0.1],
+    )
 end

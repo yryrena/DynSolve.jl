@@ -1,6 +1,31 @@
 using Test
 using DynSolve
 
+@testset "@dgesys basic parsing" begin
+    model = @dgesys begin
+        var(:c, :k)
+        param(β = 0.99, δ = 0.025)
+        equation(:Euler, :(1/c - β * (1/c) * (1 - δ)))
+    end
+    @test isa(model, Model)
+
+    ## variables collected
+    @test sort(model.variables) == sort([:c, :k])
+
+    ## parameters collected
+    @test haskey(model.parameters, :β)
+    @test haskey(model.parameters, :δ)
+    @test model.parameters[:β] ≈ 0.99
+    @test model.parameters[:δ] ≈ 0.025
+
+    ## equations collected
+    @test length(model.equations) == 1
+    eq1 = model.equations[1]
+    @test eq1.name === :Euler
+    @test eq1.expr isa Expr
+end
+
+
 @testset "DynSolve end-to-end pipeline" begin
     ## placeholder model
     fake_model = Dict(:placeholder => true)

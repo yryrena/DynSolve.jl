@@ -1,16 +1,16 @@
 # SteadyState.jl
-# Placeholder steady-state solver
-
-using LinearAlgebra
 
 """
-    steadystate(model)
+    steadystate(model) -> Dict
 
-Placeholder deterministic steady state solver.
-
-Returns a toy Dict with example steady-state values.
+Placeholder steady state solver.
+Currently returns dummy values.
 """
 function steadystate(model)
     @info "Computing steady state (placeholder)..."
-    return Dict(:k => 1.0, :c => 0.5, :y => 1.0)
+    return Dict(
+        :k => 1.0,
+        :c => 0.5,
+        :y => 1.0,
+    )
 end
