@@ -1,24 +1,28 @@
-using Documenter
-using DynSolve
+using Documenter, DynSolve
 
-makedocs(;
-    modules = [DynSolve],
+makedocs(
     sitename = "DynSolve.jl",
+    modules = [DynSolve],
     format = Documenter.HTML(),
     pages = [
         "Home" => "index.md",
-        "Quickstart" => "quickstart.md",
+        "Quick Start" => "quickstart.md",
         "API" => [
-            "Model specification" => "api/model.md",
-            "Steady state"        => "api/steady.md",
-            "Linearization"       => "api/linear.md",
-            "Solvers"             => "api/solvers.md",
-            "Analysis / IRF"      => "api/analysis.md",
-            "Report generation"   => "api/report.md",
+            "Model" => "api/model.md",
+            "Steady State" => "api/steady.md",
+            "Linearization" => "api/linear.md",
+            "Solvers" => "api/solvers.md",
+            "Analysis" => "api/analysis.md",
+            "Report" => "api/report.md"
         ],
         "Examples" => [
             "RBC" => "examples/rbc.md",
-            "New Keynesian" => "examples/nk.md",
-        ],
-    ],
+            "New Keynesian" => "examples/nk.md"
+        ]
+    ]
+)
+
+deploydocs(
+    repo = "github.com/<你的用户名>/DynSolve.jl.git",
+    branch = "gh-pages"
 )
