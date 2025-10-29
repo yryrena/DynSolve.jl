@@ -3,6 +3,7 @@
 `DynSolve.jl` is a Julia package for automated solution and analysis of dynamic general equilibrium (DGE / RBC / DSGE / NK / HANK) models.
 
 It provides a unified workflow to:
+
 - specify symbolic models (variables, shocks, equations)
 - compute steady states
 - linearize (and eventually nonlinear expand)
@@ -11,16 +12,27 @@ It provides a unified workflow to:
 
 `DynSolve.jl` aims to be an open, high-performance alternative to **Dynare (MATLAB)**, built entirely in **Julia** and integrated with `ModelingToolkit.jl`.
 
+---
+
+## Project Status
+
+`DynSolve.jl v0.1.0` implements the **core numerical pipeline** for model analysis:
+
+- `steadystate` (placeholder)
+- `linearize` (placeholder)
+- `solve` via `PerturbationSolver`
+- `impulse_response`, `analyze`, and `export_report`
+
+The symbolic model interface (`@dgesys`) and nonlinear solvers will be added in future releases.
+
 
 ---
 ## Features
 
-- symbolic model specification using `@dgesys` (powered by ModelingToolkit)
-- automatic steady-state computation
-- linearization and perturbation solver
-- impulse responses and analytical diagnostics
-- projection and VFI solver placeholders (for future nonlinear/global models)
-- Markdown / HTML reporting with `Weave.jl`
+- clean modular design and working package structure
+- automated steady-state, linearization, and perturbation placeholders
+- impulse responses and simple Markdown reporting
+- ready for integration with `ModelingToolkit.jl`
 - extensible design for macroeconomic research and teaching
 
 
@@ -43,7 +55,7 @@ Pkg.activate(".")
 Pkg.instantiate()
 ```
 
-Once published, you’ll be able to install directly via:
+Once registered, you will be able to install via:
 
 ```julia
 Pkg.add("DynSolve")
@@ -52,6 +64,35 @@ Pkg.add("DynSolve")
 ------
 
 ## Quick Example
+
+For the current prototype (v0.1.0):
+
+```JULIA
+using DynSolve
+
+fake_model = Dict(:placeholder => true)
+
+ss  = steadystate(fake_model)
+lin = linearize(fake_model, ss)
+sol = solve(lin, PerturbationSolver())
+irf = impulse_response(sol; shock=:εA, horizon=40)
+rep = analyze(fake_model, ss, sol, irf)
+export_report(rep, "rbc_report.md")
+```
+
+This generates `rbc_report.md` containing:
+
+```markdown
+# DynSolve Report
+## Summary
+Analysis complete
+```
+
+---
+
+## Planned Symbolic Interface
+
+The symbolic interface will allow users to define models using a DSL macro:
 
 ```julia
 using DynSolve
