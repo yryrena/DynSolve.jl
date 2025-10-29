@@ -20,10 +20,7 @@ Dict(:A => [0.9], :B => [0.1])
 
 - compute Jacobians of the model equations with respect to variables and shocks 
 - substitute steady-state values 
-- return coefficient matrices for the state-space representation:
-$$
-x_{t+1} = A x_t + B \varepsilon_t
-$$
+- return coefficient matrices for the state-space representation: $x_{t+1} = A x_t + B \varepsilon_t$
 
 
 
