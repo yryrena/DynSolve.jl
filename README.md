@@ -4,10 +4,7 @@
 [![Docs](https://img.shields.io/badge/docs-stable-blue.svg)](https://yryrena.github.io/DynSolve.jl/)
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 686da0c (update)
 `DynSolve.jl` is a Julia package for automated solution and analysis of dynamic general equilibrium (DGE / RBC / DSGE / NK / HANK) models.
 
 It provides a unified workflow to:
