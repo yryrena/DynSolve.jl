@@ -18,4 +18,4 @@ Thumbs.db
 *.html
 *.pdf
 *.md~
-reports/
+reports/docs/build/
