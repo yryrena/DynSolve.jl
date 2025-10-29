@@ -11,7 +11,7 @@ It provides a unified workflow to:
 
 `DynSolve.jl` aims to be an open, high-performance alternative to **Dynare (MATLAB)**, built entirely in **Julia** and integrated with `ModelingToolkit.jl`.
 
- 
+
 ---
 ## Features
 
@@ -22,7 +22,7 @@ It provides a unified workflow to:
 - projection and VFI solver placeholders (for future nonlinear/global models)
 - Markdown / HTML reporting with `Weave.jl`
 - extensible design for macroeconomic research and teaching
- 
+
 
 ---
 ## Installation
@@ -34,7 +34,7 @@ git clone https://github.com/yryrena/DynSolve.jl
 cd DynSolve.jl
 julia --project=.
 ```
- 
+
 Then activate and instantiate the environment:
 
 ```julia
@@ -118,17 +118,17 @@ DynSolve/
 
 ## Available Solvers
 
-| Solver                 | Description                                       | Status        |
-| ---------------------- | ------------------------------------------------- | ------------- |
-| `PerturbationSolver()` | Linearized DSGE / RBC models (Blanchard–Kahn)     | ✅ Implemented |
-| `ProjectionSolver()`   | Nonlinear global methods (Chebyshev, collocation) | 🔜 Planned     |
-| `VFISolver()`          | Value function iteration (heterogeneous agents)   | 🔜 Planned     |
+| Solver                 | Description                                       |
+| ---------------------- | ------------------------------------------------- |
+| `PerturbationSolver()` | Linearized DSGE / RBC models (Blanchard–Kahn)     |
+| `ProjectionSolver()`   | Nonlinear global methods (Chebyshev, collocation) |
+| `VFISolver()`          | Value function iteration (heterogeneous agents)   |
 
 ------
 
 ## Documentation
 
-Documentation is built with **Documenter.jl**.
+Documentation is built with ``Documenter.jl`.
 
 To build locally:
 
@@ -161,5 +161,3 @@ Areas particularly open for contribution:
 - [NLsolve.jl](https://github.com/JuliaNLSolvers/NLsolve.jl)
 - [Plots.jl](https://github.com/JuliaPlots/Plots.jl)
 - [Weave.jl](https://github.com/JunoLab/Weave.jl)
-
-Special thanks to the Julia and SciML communities for their open-source innovation.
