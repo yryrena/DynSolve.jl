@@ -97,7 +97,7 @@ using DynSolve
 m = @dgesys begin
     var(:c, :k)                  ## declares model variables
     param(β = 0.99, δ = 0.025)   ## parameters
-    equation(:Euler, :(1/c - β * (1/c) * (1 - δ)))  # named equation
+    equation(:Euler, :(1/c - β * (1/c) * (1 - δ)))   ## named equation
 end
 
 ## m is a DynSolve.Model
