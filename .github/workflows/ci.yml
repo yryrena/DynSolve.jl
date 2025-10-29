@@ -6,21 +6,21 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: write
+
 jobs:
   test:
-    name: Run package tests
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Julia
         uses: julia-actions/setup-julia@v2
         with:
           version: '1.11'
 
-      - name: Instantiate package environment
+      - name: Instantiate
         run: |
           julia --project=. -e 'using Pkg; Pkg.instantiate()'
 
@@ -29,13 +29,9 @@ jobs:
           julia --project=. -e 'using Pkg; Pkg.test("DynSolve")'
 
   docs:
-    name: Build and deploy docs
     runs-on: ubuntu-latest
-    needs: test
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Julia
         uses: julia-actions/setup-julia@v2
