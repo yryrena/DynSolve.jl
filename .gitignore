@@ -1,0 +1,21 @@
+## julia
+Manifest.toml
+*.jl.cov
+*.jl.mem
+*.so
+*.dylib
+*.dll
+deps/build.log
+
+## jupyter notebooks
+.ipynb_checkpoints/
+
+## OS files
+.DS_Store
+Thumbs.db
+
+## reports / generated files
+*.html
+*.pdf
+*.md~
+reports/
